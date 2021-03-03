@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const dims = 3;
-// const dims = 5;
+// const dims = 3;
+const dims = 5;
 
 const Square = ({onClick, value, highlighted}) => {
     const highlightClass = highlighted ? "square-highlighted" : '';
@@ -31,7 +31,7 @@ const Board = ({squares, onClick}) => {
                 highlighted = true;
             } else if (winner.line === 'diagDown' && i === j) {
                 highlighted = true;
-            } else if (winner.line === 'diagUp' && i === (dims-1) - 1) {
+            } else if (winner.line === 'diagUp' && i === (dims-j) - 1) {
                 highlighted = true;
             }
         }
