@@ -149,15 +149,33 @@ const Game  = ({dims}) => {
 }
 
 const NewGame  = () => {
-    // const dims = 3;
-    const dims = 5;
+    // const initDims = 3;
+    const minDims = 2;
+    const maxDims = 10;
+    const initDims = 5;
+    const [dims, setDims] = useState(initDims);
+
+    const onChange = event => {
+        const newDims = event.target.value;
+        setDims(newDims)
+    };
     
     return (
-        <Game 
-            dims = {dims}
-        />
+        <>
+            <>
+                Dimensions:
+                <select name="qty" id="qty" value={dims} onChange={onChange}>
+                    {[...Array((maxDims - minDims)+1).keys()].map((value) => <option key={value} value={value+minDims}>{value+minDims}</option>)}
+                </select>
+                <p/>
+            </>
+            <Game 
+                dims = {dims}
+            />
+        </>
     );
 }
+// {[...Array(window.maxQty+1).keys()].map((value) => <option key={value} value={value}>{value}</option>)}
 
 // ========================================
 
