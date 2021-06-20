@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-// const dims = 3;
-const dims = 5;
-
 const Square = ({onClick, value, highlighted}) => {
     const highlightClass = highlighted ? "square-highlighted" : '';
     return (
@@ -14,7 +11,7 @@ const Square = ({onClick, value, highlighted}) => {
     ); 
 }
 
-const Board = ({squares, onClick}) => {
+const Board = ({dims, squares, onClick}) => {
     const renderSquare = (i, j) => {
         const value = squares[i][j]
         const winner = calculateWinner(dims, squares);
@@ -61,7 +58,7 @@ const Board = ({squares, onClick}) => {
     );
 }
 
-const Game  = () => {
+const Game  = ({dims}) => {
     const [reverse, setReverse] = useState(false);
     const [history, setHistory] = useState(
         [{
@@ -141,6 +138,7 @@ const Game  = () => {
                 <Board
                     squares={history[currentMoveNum].squares}
                     onClick={(i, j) => handleClick(i, j)}
+                    dims={dims}
                 />
             </div>
             <div className="game-info">
@@ -150,10 +148,21 @@ const Game  = () => {
     );
 }
 
+const NewGame  = () => {
+    // const dims = 3;
+    const dims = 5;
+    
+    return (
+        <Game 
+            dims = {dims}
+        />
+    );
+}
+
 // ========================================
 
 ReactDOM.render(
-    <Game />,
+    <NewGame />,
     document.getElementById('root')
 );
 
