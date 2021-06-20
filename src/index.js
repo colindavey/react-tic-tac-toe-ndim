@@ -14,6 +14,7 @@ const Square = ({onClick, value, highlighted}) => {
 const Board = ({dims, squares, onClick}) => {
     const renderSquare = (i, j) => {
         const value = squares[i][j]
+        // console.log('cw1', dims, squares)
         const winner = calculateWinner(dims, squares);
         // line is one of 
         //   cN (or other number) - column N
@@ -58,7 +59,16 @@ const Board = ({dims, squares, onClick}) => {
     );
 }
 
-const Game  = ({dims}) => {
+const Game  = () => {
+    console.log('A', init2DimArray(3))
+    console.log('B', init2DimArray(3))
+    console.log('C', init2DimArray(3))
+    // const initDims = 3;
+    const minDims = 2;
+    const maxDims = 10;
+    const initDims = 5;
+    const [dims, setDims] = useState(initDims);
+
     const [reverse, setReverse] = useState(false);
     const [history, setHistory] = useState(
         [{
@@ -68,6 +78,19 @@ const Game  = ({dims}) => {
         }])
     const [currentMoveNum, setCurrentMoveNum] = useState(0);
 
+    const onChange = event => {
+        const newDims = event.target.value;
+        setDims(newDims)
+        setHistory(
+            [{
+                squares: init2DimArray(newDims),
+                row: '',
+                col: '',
+            }]
+        )
+        setCurrentMoveNum(0)
+    };
+    
     const handleClick = (i, j) => {
         console.log(history)
         let local_history = history.slice(0, currentMoveNum+1);
@@ -77,6 +100,7 @@ const Game  = ({dims}) => {
             return arr.slice();
         });
 
+        console.log('cw2')
         if (calculateWinner(dims, squares) || squares[i][j]) {
             return;
         }
@@ -108,6 +132,7 @@ const Game  = ({dims}) => {
             listingButtons.reverse();
         }
 
+        console.log('cw3')
         const winner = calculateWinner(dims, history[currentMoveNum].squares);
         let status;
         if (winner) {
@@ -133,49 +158,35 @@ const Game  = ({dims}) => {
 
     console.log(currentMoveNum)
     return (
-        <div className="game">
-            <div className="game-board">
-                <Board
-                    squares={history[currentMoveNum].squares}
-                    onClick={(i, j) => handleClick(i, j)}
-                    dims={dims}
-                />
+        <>
+            <div>
+                Dimensions:
+                <select name="dims" id="dims" value={dims} onChange={onChange}>
+                    {[...Array((maxDims - minDims)+1).keys()].map((value) => <option key={value} value={value+minDims}>{value+minDims}</option>)}
+                </select>
+                <p/>
             </div>
-            <div className="game-info">
-                {renderGameInfo()}
+            <div className="game">
+                <div className="game-board">
+                    <Board
+                        squares={history[currentMoveNum].squares}
+                        onClick={(i, j) => handleClick(i, j)}
+                        dims={dims}
+                    />
+                </div>
+                <div className="game-info">
+                    {renderGameInfo()}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 
 const NewGame  = () => {
-    // const initDims = 3;
-    const minDims = 2;
-    const maxDims = 10;
-    const initDims = 5;
-    const [dims, setDims] = useState(initDims);
-
-    const onChange = event => {
-        const newDims = event.target.value;
-        setDims(newDims)
-    };
-    
     return (
-        <>
-            <>
-                Dimensions:
-                <select name="qty" id="qty" value={dims} onChange={onChange}>
-                    {[...Array((maxDims - minDims)+1).keys()].map((value) => <option key={value} value={value+minDims}>{value+minDims}</option>)}
-                </select>
-                <p/>
-            </>
-            <Game 
-                dims = {dims}
-            />
-        </>
+        <Game />
     );
 }
-// {[...Array(window.maxQty+1).keys()].map((value) => <option key={value} value={value}>{value}</option>)}
 
 // ========================================
 
@@ -246,8 +257,23 @@ function rowCol2key(nDims, row, col) {
 
 function init2DimArray(nDims) {
     const array2D = []
+    // For some reason this loop, which worked fine before dynamic resizing,
+    // returns a single column because the Array.fill mysteriously returns a single value
+    // only after the initial array creation, which works. 
+    // for (let row=0; row < nDims; row++) {
+    //     console.log('  for', row, nDims)
+    // //     let tmp = Array(nDims).fill(null)
+    //     let tmp = Array(nDims).fill(null, 0, nDims)
+    //     console.log('    tmp', nDims, tmp, Array(nDims).fill(null, 0, nDims))
+    //     array2D.push(tmp);
+    //     console.log('    ', array2D)
+    // }
     for (let row=0; row < nDims; row++) {
-        array2D.push(Array(nDims).fill(null));
+        let tmp = []
+        for (let col=0; col < nDims; col++) {
+            tmp.push(null)
+        }
+        array2D.push(tmp);
     }
     return array2D;
 }
